@@ -1,1 +1,1 @@
-# VGDev_Assignment2
+# Chapter 3 code branch
