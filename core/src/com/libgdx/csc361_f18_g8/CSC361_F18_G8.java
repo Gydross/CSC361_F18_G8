@@ -13,7 +13,7 @@ public class CSC361_F18_G8 extends ApplicationAdapter {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+		img = new Texture("images/badlogic.jpg");
 	}
 
 	@Override
