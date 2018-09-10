@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
+import com.libgdx.csc361_f18_g8.util.CameraHelper;
 public class WorldController extends InputAdapter
 {
 	private static final String TAG = 
@@ -25,7 +26,7 @@ public class WorldController extends InputAdapter
 	private void init() 
 	{
 		Gdx.input.setInputProcessor(this);
-		camperHelper = new CameraHelper();
+		cameraHelper = new CameraHelper();
 		initTestObjects();
 	}
 	private void initTestObjects()
@@ -147,7 +148,7 @@ public class WorldController extends InputAdapter
 			// selected sprite
 			if (cameraHelper.hasTarget())
 			{
-				cameraHelper.setTarget(testSprites[selectedSprites]);
+				cameraHelper.setTarget(testSprites[selectedSprite]);
 			}
 			Gdx.app.debug(TAG, "Sprite #"+selectedSprite+" selected.");
 			
