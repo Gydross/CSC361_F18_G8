@@ -4,7 +4,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker.Settings;
-import com.libgdx.csc361_f18_g8.CSC361_F18_G8;
+//import com.libgdx.csc361_f18_g8.CSC361_F18_G8;
 import com.libgdx.csc361_f18_g8.CanyonBunnyMain;
 
 public class DesktopLauncher
@@ -21,7 +21,7 @@ public class DesktopLauncher
 			settings.maxHeight = 1024;
 			settings.duplicatePadding = false;
 			settings.debug = drawDebugOutline;
-			TexturePacker.process(settings, "assets/images", "assets/images", "canyonbunny.pack");
+			//TexturePacker.process(settings, "assets/images/*", "assets/images/", "canyonbunny.pack");
 		}
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "CanyonBunny";
