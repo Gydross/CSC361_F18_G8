@@ -1,4 +1,5 @@
 package com.libgdx.csc361_f18_g8.game;
+
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -12,6 +13,12 @@ import com.libgdx.csc361_f18_g8.util.CameraHelper;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * WorldController
+ * Manipulates the game world directly, loads assets,
+ *   and establishes player controls.
+ * @author Connor Orischak
+ */
 public class WorldController extends InputAdapter
 {
 	private static final String TAG = 

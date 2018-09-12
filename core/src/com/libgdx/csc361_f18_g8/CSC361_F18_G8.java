@@ -1,5 +1,7 @@
 /**
- * Contains deprecated code
+ * Contains deprecated code.
+ * This class' functionality has been entirely absorbed by CanyonBunnyMain;
+ *   retaining for legacy purposes.
  * 
 package com.libgdx.csc361_f18_g8;
  

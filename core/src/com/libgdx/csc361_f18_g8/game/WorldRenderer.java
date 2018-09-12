@@ -6,51 +6,81 @@ import com.badlogic.gdx.utils.Disposable;
 import com.libgdx.csc361_f18_g8.util.Constants;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
+/**
+ * WorldRenderer Renders the game world. Also initializes the camera position
+ * and camera viewport.
+ * 
+ * @author Aaron Wink
+ */
 public class WorldRenderer implements Disposable
 {
-    private OrthographicCamera camera;
-    private SpriteBatch batch;
-    private WorldController worldController;
-    
-    public WorldRenderer (WorldController worldController) 
-    { 
-        this.worldController = worldController;
-        init();
-    }
-    
-    private void init () 
-    { 
-        batch = new SpriteBatch();
-        camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT);
-        camera.position.set(0,0,0);
-        camera.update();
-    }
-    
-    public void render () 
-    { 
-        renderTestObjects();
-    }
-    
-    private void renderTestObjects()
-    {
-        worldController.cameraHelper.applyTo(camera);
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        for (Sprite sprite : worldController.testSprites)
-        {
-            sprite.draw(batch);
-        }
-        batch.end();
-    }
-    
-    public void resize (int width, int height) 
-    { 
-        camera.viewportWidth = (Constants.VIEWPORT_HEIGHT / height) * width;
-        camera.update();
-    }
-    
-    @Override public void dispose () 
-    { 
-        batch.dispose();
-    }
+	private OrthographicCamera	camera;				// The world's camera
+	private SpriteBatch			batch;				// Draws sprites passed into it
+	private WorldController		worldController;	// The WorldController
+
+	/**
+	 * WorldRenderer - Creation method
+	 * 
+	 * @param worldController - the WorldController to be stored in the WorldRenderer
+	 */
+	public WorldRenderer(WorldController worldController)
+	{
+		this.worldController = worldController;
+		init();
+	}
+
+	/**
+	 * init - Instantiates batch and camera, and initializes/updates camera.
+	 */
+	private void init()
+	{
+		batch = new SpriteBatch();
+		camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT);
+		camera.position.set(0, 0, 0);
+		camera.update();
+	}
+
+	/**
+	 * render - Calls renderTestObjects().
+	 */
+	public void render()
+	{
+		renderTestObjects();
+	}
+
+	/**
+	 * renderTestObjects - Draws sprites in the world by passing them into batch.
+	 */
+	private void renderTestObjects()
+	{
+		worldController.cameraHelper.applyTo(camera);
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+		for (Sprite sprite : worldController.testSprites)
+		{
+			sprite.draw(batch);
+		}
+		batch.end();
+	}
+
+	/**
+	 * resize - Resizes the viewport and updates the camera.
+	 * 
+	 * @param width - The desired viewport width
+	 * @param height - The desired viewport height
+	 */
+	public void resize(int width, int height)
+	{
+		camera.viewportWidth = (Constants.VIEWPORT_HEIGHT / height) * width;
+		camera.update();
+	}
+
+	/**
+	 * Cleans out batch and frees up memory.
+	 */
+	@Override
+	public void dispose()
+	{
+		batch.dispose();
+	}
 }
