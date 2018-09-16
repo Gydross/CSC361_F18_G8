@@ -21,7 +21,9 @@ public class Mountains extends AbstractGameObject
 		this.length = length;
 		init();
 	}
-	
+	/**
+	 * initialization
+	 */
 	public void init()
 	{
 		dimension.set(10,2);
@@ -33,6 +35,13 @@ public class Mountains extends AbstractGameObject
 		origin.x = -dimension.x * 2;
 		length += dimension.x * 2;
 	}
+	/**
+	 * draws a mountain visible in gameplay
+	 * @param batch
+	 * @param offsetX
+	 * @param offsetY
+	 * @param tintColor
+	 */
 	private void drawMountain (SpriteBatch batch, float offsetX,
 		float offsetY, float tintColor)
 	{
@@ -63,6 +72,10 @@ public class Mountains extends AbstractGameObject
 		// reset color to white
 		batch.setColor(1, 1, 1, 1);
 	}
+	/**
+	 * renders the mountain scenes
+	 * @param batch
+	 */
 	@Override
 	public void render (SpriteBatch batch) 
 	{
