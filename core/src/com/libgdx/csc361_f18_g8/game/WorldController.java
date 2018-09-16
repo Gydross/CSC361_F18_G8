@@ -1,4 +1,5 @@
 package com.libgdx.csc361_f18_g8.game;
+
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -9,6 +10,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.libgdx.csc361_f18_g8.util.CameraHelper;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
+
+/**
+ * WorldController
+ * Manipulates the game world directly, loads assets,
+ *   and establishes player controls.
+ * @author Connor Orischak
+ */
 public class WorldController extends InputAdapter
 {
 	private static final String TAG = 
@@ -31,21 +41,31 @@ public class WorldController extends InputAdapter
 	}
 	private void initTestObjects()
 	{
-		//Create array of 5 test sprites
+		// Create array of 5 test sprites
 		testSprites = new Sprite[5];
-		//Create empty POT-sized Pixmap with 8 bit RGBA pixel data
-		int width = 32;
-		int height = 32;
-		Pixmap pixmap = createProceduralPixmap(width,height);
-		Texture texture = new Texture(pixmap);
-		for(int i=0;i<testSprites.length;i++)
+		
+		// Create a list of texture regions
+		Array<TextureRegion> regions = new Array<TextureRegion>();
+		regions.add(Assets.instance.bunny.head);
+		regions.add(Assets.instance.feather.feather);
+		regions.add(Assets.instance.goldCoin.goldCoin);
+		
+		// Create new sprites using a random texture region
+		for(int i = 0; i < testSprites.length; i++)
 		{
 			Sprite spr = new Sprite(texture);
+			// Define sprite size to be 1x1m in game world
 			spr.setSize(1, 1);
+			
+			//Set origin to sprite's center
 			spr.setOrigin(spr.getWidth()/ 2.0f, spr.getHeight()/2.0f);
+			
+			// Calculate random position for sprite
 			float randomX = MathUtils.random(-2.0f,2.0f);
 			float randomY = MathUtils.random(-2.0f,2.0f);
 			spr.setPosition(randomX, randomY);
+			
+			// Insert new sprite into the array
 			testSprites[i] = spr;
 		}
 		selectedSprite = 0;

@@ -1,9 +1,16 @@
 package com.libgdx.csc361_f18_g8.util;
+
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * CameraHelper
+ * Updates the position of the camera based on a focal point;
+ *   additionally, handles the zoom of the camera.
+ * @author Connor Orischak
+ */
 public class CameraHelper
 {
 	private static final String TAG = CameraHelper.class.getName();
