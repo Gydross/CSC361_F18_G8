@@ -56,6 +56,28 @@ public class Clouds extends AbstractGameObject
 			clouds.add(cloud);
 		}
 	}
+
+	private Cloud spawnCloud () {
+		Cloud cloud = new Cloud();
+		cloud.dimension.set(dimension);
+		// select random cloud image
+		cloud.setRegion(regClouds.random());
+		// position
+		Vector2 pos = new Vector2();
+		pos.x = length + 10; // position after end of level
+		pos.y += 1.75; // base position
+		pos.y += MathUtils.random(0.0f, 0.2f)
+				* (MathUtils.randomBoolean() ? 1 : -1); // random additional position
+		cloud.position.set(pos);
+		return cloud;
+	}
+	@Override
+	public void render (SpriteBatch batch) 
+	{
+		for (Cloud cloud : clouds)
+			cloud.render(batch);
+	}
+
 }
 
 
