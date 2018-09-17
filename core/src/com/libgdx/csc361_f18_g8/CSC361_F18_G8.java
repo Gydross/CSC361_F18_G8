@@ -1,4 +1,10 @@
+/**
+ * Contains deprecated code.
+ * This class' functionality has been entirely absorbed by CanyonBunnyMain;
+ *   retaining for legacy purposes.
+ * 
 package com.libgdx.csc361_f18_g8;
+ 
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -30,4 +36,4 @@ public class CSC361_F18_G8 extends ApplicationAdapter {
 		batch.dispose();
 		img.dispose();
 	}
-}
+}*/
