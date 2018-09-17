@@ -35,8 +35,7 @@ public class Assets implements Disposable, AssetErrorListener
     public AssetRock            rock;
     public AssetGoldCoin        goldCoin;
     public AssetFeather         feather;
-    public AssetLevelDecoration levelDecoration;
-    TextureAtlas                atlas = assetManager.get(Constants.TEXTURE_ATLAS_OBJECTS);
+    public AssetLevelDecoration levelDecoration;    
     public AssetFonts           fonts;
     
     public class AssetFonts
@@ -51,9 +50,9 @@ public class Assets implements Disposable, AssetErrorListener
         public AssetFonts() 
         {
             // Create three fonts using LibGDX's 15px bitmap font
-            defaultSmall = new BitmapFont(Gdx.files.internal("../core/assets/font/arial-15.fnt"), true);
-            defaultNormal = new BitmapFont(Gdx.files.internal("../core/assets/font/arial-15.fnt"), true);
-            defaultBig = new BitmapFont(Gdx.files.internal("../core/assets/font/arial-15.fnt"), true);
+            defaultSmall = new BitmapFont(Gdx.files.internal("font/arial-15.fnt"), true);
+            defaultNormal = new BitmapFont(Gdx.files.internal("font/arial-15.fnt"), true);
+            defaultBig = new BitmapFont(Gdx.files.internal("font/arial-15.fnt"), true);
             
             // Set font sizes
             // The errors lie, this method is DEFINITELY defined within BitmapFont.class as setScale(ScaleXY).
@@ -72,29 +71,31 @@ public class Assets implements Disposable, AssetErrorListener
     public void init(AssetManager assetManager)
     {
         this.assetManager = assetManager;
+        
         // set asset manager error handler
         assetManager.setErrorListener(this);
+        
         // load texture atlas
         assetManager.load(Constants.TEXTURE_ATLAS_OBJECTS, TextureAtlas.class);
+        
         // start loading assets and wait until finished
         assetManager.finishLoading();
         Gdx.app.debug(TAG, "# of assets loaded: " + assetManager.getAssetNames().size);
-        for (String a : assetManager.getAssetNames())
-            Gdx.app.debug(TAG, "asset: " + a);
         
-    }
-    
-    /**
-     * Check here. There is an extra set of braces that enclose some instance
-     * variables. This is the only way I found that gets rid of the syntax errors.
-     */
-    {
+        for (String a : assetManager.getAssetNames())
+        {
+        	Gdx.app.debug(TAG, "asset: " + a);
+        }
+        
+        TextureAtlas atlas = assetManager.get(Constants.TEXTURE_ATLAS_OBJECTS);
+        
+        
         // enable texture filtering for pixel smoothing
         for (Texture t : atlas.getTextures())
         {
             t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         }
-        
+            
         // create game resource objects
         fonts = new AssetFonts();
         bunny = new AssetBunny(atlas);
@@ -103,6 +104,7 @@ public class Assets implements Disposable, AssetErrorListener
         feather = new AssetFeather(atlas);
         levelDecoration = new AssetLevelDecoration(atlas);
     }
+    
     
     @Override
     public void dispose()
@@ -208,6 +210,4 @@ public class Assets implements Disposable, AssetErrorListener
             waterOverlay = atlas.findRegion("water_overlay");
         }
     }
-    
-    
 }

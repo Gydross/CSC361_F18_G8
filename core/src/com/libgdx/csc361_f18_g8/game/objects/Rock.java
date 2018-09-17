@@ -24,7 +24,7 @@ public class Rock extends AbstractGameObject
 	{
 		dimension.set(1,1.5f);
 		regEdge = Assets.instance.rock.edge;
-		regMiddle = Assets.instance.rock.edge;
+		regMiddle = Assets.instance.rock.middle;
 		// start length of this rock
 		setLength(1);
 	}
