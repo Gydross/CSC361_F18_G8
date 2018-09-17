@@ -45,21 +45,19 @@ public class WorldRenderer implements Disposable
 	 */
 	public void render()
 	{
-		renderTestObjects();
+		renderWorld(batch);
 	}
 
 	/**
-	 * renderTestObjects - Draws sprites in the world by passing them into batch.
+	 * renderWorld - Draws the world.
+	 * @param batch: The batch that will be used to draw sprites based on the level data.
 	 */
-	private void renderTestObjects()
+	private void renderWorld(SpriteBatch batch)
 	{
 		worldController.cameraHelper.applyTo(camera);
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		for (Sprite sprite : worldController.testSprites)
-		{
-			sprite.draw(batch);
-		}
+		worldController.level.render(batch);
 		batch.end();
 	}
 
