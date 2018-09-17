@@ -57,9 +57,9 @@ public class Assets implements Disposable, AssetErrorListener
             
             // Set font sizes
             // The errors lie, this method is DEFINITELY defined within BitmapFont.class as setScale(ScaleXY).
-            defaultSmall.setScale(0.75f);
-            defaultNormal.setScale(1.0f);
-            defaultBig.setScale(2.0f);
+            defaultSmall.getData().setScale(0.75f);
+            defaultNormal.getData().setScale(1.0f);
+            defaultBig.getData().setScale(2.0f);
             
             // Enable linear texture filtering for smooth fonts
             defaultSmall.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -111,15 +111,6 @@ public class Assets implements Disposable, AssetErrorListener
         fonts.defaultSmall.dispose();
         fonts.defaultNormal.dispose();
         fonts.defaultBig.dispose();
-    }
-    
-    /*
-     * really don't know why it's telling me to get rid of the override
-     */
-    @Override
-    public void error(String filename, Class type, Throwable throwable)
-    {
-        Gdx.app.error(TAG, "Couldn't load asset '" + filename + "'", (Exception) throwable);
     }
     
     @Override
