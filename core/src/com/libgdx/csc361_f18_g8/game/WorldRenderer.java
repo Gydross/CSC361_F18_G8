@@ -1,10 +1,12 @@
 package com.libgdx.csc361_f18_g8.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
 import com.libgdx.csc361_f18_g8.util.Constants;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 /**
  * WorldRenderer Renders the game world. Also initializes the camera position
@@ -14,73 +16,156 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
  */
 public class WorldRenderer implements Disposable
 {
-	private OrthographicCamera	camera;				// The world's camera
-	private SpriteBatch			batch;				// Draws sprites passed into it
-	private WorldController		worldController;	// The WorldController
-
-	/**
-	 * WorldRenderer - Creation method
-	 * 
-	 * @param worldController - the WorldController to be stored in the WorldRenderer
-	 */
-	public WorldRenderer(WorldController worldController)
-	{
-		this.worldController = worldController;
-		init();
-	}
-
-	/**
-	 * init - Instantiates batch and camera, and initializes/updates camera.
-	 */
-	private void init()
-	{
-		batch = new SpriteBatch();
-		camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT);
-		camera.position.set(0, 0, 0);
-		camera.update();
-	}
-
-	/**
-	 * render - Calls renderTestObjects().
-	 */
-	public void render()
-	{
-		renderTestObjects();
-	}
-
-	/**
-	 * renderTestObjects - Draws sprites in the world by passing them into batch.
-	 */
-	private void renderTestObjects()
-	{
-		worldController.cameraHelper.applyTo(camera);
-		batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-		for (Sprite sprite : worldController.testSprites)
-		{
-			sprite.draw(batch);
-		}
-		batch.end();
-	}
-
-	/**
-	 * resize - Resizes the viewport and updates the camera.
-	 * 
-	 * @param width - The desired viewport width
-	 * @param height - The desired viewport height
-	 */
-	public void resize(int width, int height)
-	{
-		camera.viewportWidth = (Constants.VIEWPORT_HEIGHT / height) * width;
-		camera.update();
-	}
-
-	/**
-	 * Cleans out batch and frees up memory.
-	 */
-	@Override
-	public void dispose()
-	{
-		batch.dispose();
-	}
+    private OrthographicCamera camera;          // The world's camera
+    private OrthographicCamera cameraGUI;       // The GUI's camera
+    private SpriteBatch        batch;           // Draws sprites passed into it
+    private WorldController    worldController; // The WorldController
+    
+    /**
+     * WorldRenderer - Creation method
+     * 
+     * @param worldController - the WorldController to be stored in the
+     *                        WorldRenderer
+     */
+    public WorldRenderer(WorldController worldController)
+    {
+        this.worldController = worldController;
+        init();
+    }
+    
+    /**
+     * init - Instantiates batch and camera, and initializes/updates camera.
+     */
+    private void init()
+    {
+        batch = new SpriteBatch();
+        camera = new OrthographicCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT);
+        camera.position.set(0, 0, 0);
+        camera.update();
+        
+        cameraGUI = new OrthographicCamera(Constants.VIEWPORT_GUI_WIDTH, Constants.VIEWPORT_GUI_HEIGHT);
+        cameraGUI.position.set(0,0,0);
+        cameraGUI.setToOrtho(true);  // Flip y-axis
+        cameraGUI.update();
+    }
+    
+    /**
+     * render - Calls renderTestObjects().
+     */
+    public void render()
+    {
+        renderWorld(batch);
+        renderGui(batch);
+    }
+    
+    /**
+     * renderWorld - Draws the world.
+     * 
+     * @param batch: The batch that will be used to draw sprites based on the level
+     *        data.
+     */
+    private void renderWorld(SpriteBatch batch)
+    {
+        worldController.cameraHelper.applyTo(camera);
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        worldController.level.render(batch);
+        batch.end();
+    }
+    
+    /**
+     * resize - Resizes the viewport and updates the camera.
+     * 
+     * @param width  - The desired viewport width
+     * @param height - The desired viewport height
+     */
+    public void resize(int width, int height)
+    {
+        camera.viewportWidth = (Constants.VIEWPORT_HEIGHT / height) * width;
+        camera.update();
+        cameraGUI.viewportHeight = Constants.VIEWPORT_GUI_HEIGHT;
+        cameraGUI.viewportWidth = (Constants.VIEWPORT_GUI_HEIGHT / (float)height) * (float)width;
+        cameraGUI.position.set(cameraGUI.viewportWidth / 2, cameraGUI.viewportHeight / 2, 0);
+        cameraGUI.update();
+    }
+    
+    /**
+     * Cleans out batch and frees up memory.
+     */
+    @Override
+    public void dispose()
+    {
+        batch.dispose();
+    }
+    
+    /**
+     * Draws the score in the GUI.
+     */
+    private void renderGuiScore(SpriteBatch batch)
+    {
+        float x = -15;
+        float y = -15;
+        batch.draw(Assets.instance.goldCoin.goldCoin, x, y, 50, 50, 100, 100, 0.35f, -0.35f, 0);
+        Assets.instance.fonts.defaultBig.draw(batch, "" + worldController.score, x+17, y+37);
+    }
+    
+    /**
+     * Draws the player's extra lives.
+     */
+    private void renderGuiExtraLive(SpriteBatch batch)
+    {
+        float x = cameraGUI.viewportWidth - 50 - Constants.LIVES_START * 50;
+        float y = -15;
+        for (int i = 0; i < Constants.LIVES_START; i++)
+        {
+            if (worldController.lives <= i)
+                batch.setColor(0.5f, 0.5f, 0.5f, 0.5f);
+            batch.draw(Assets.instance.bunny.head, x + i * 50,  y, 50, 50, 120, 100, 0.35f, -0.35f, 0);
+            batch.setColor(1,1,1,1);
+        }
+    }
+    
+    /**
+     * Draws the FPS counter.
+     */
+    private void renderGuiFpsCounter(SpriteBatch batch)
+    {
+        float x = cameraGUI.viewportWidth - 55;
+        float y = cameraGUI.viewportHeight - 15;
+        int fps = Gdx.graphics.getFramesPerSecond();
+        BitmapFont fpsFont = Assets.instance.fonts.defaultNormal;
+        
+        if (fps >= 45)
+        {
+            // 45 or more FPS show up in green
+            fpsFont.setColor(0,1,0,1);
+        } else if (fps >= 30) {
+            // 30 or more FPS show up in yellow
+            fpsFont.setColor(1,1,0,1);
+        } else {
+            // Less than 30 FPS show up in red
+            fpsFont.setColor(1,0,0,1);
+        }
+        fpsFont.draw(batch, "FPS: " + fps, x, y);
+        fpsFont.setColor(1,1,1,1);
+    }
+    
+    /**
+     * Calls individual functions to draw the GUI.
+     */
+    private void renderGui(SpriteBatch batch)
+    {
+        batch.setProjectionMatrix(cameraGUI.combined);
+        batch.begin();
+        
+        // Draw collected gold coins icon and text
+        renderGuiScore(batch);
+        
+        // Draw extra lives icons
+        renderGuiExtraLive(batch);
+        
+        // Draw FPS counter
+        renderGuiFpsCounter(batch);
+        batch.end();
+    }
 }
