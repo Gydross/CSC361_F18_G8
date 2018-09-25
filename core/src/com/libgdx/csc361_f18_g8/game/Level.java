@@ -9,6 +9,9 @@ import com.libgdx.csc361_f18_g8.game.objects.Clouds;
 import com.libgdx.csc361_f18_g8.game.objects.Mountains;
 import com.libgdx.csc361_f18_g8.game.objects.Rock;
 import com.libgdx.csc361_f18_g8.game.objects.WaterOverlay;
+import com.libgdx.csc361_f18_g8.game.objects.BunnyHead;
+import com.libgdx.csc361_f18_g8.game.objects.Feather;
+import com.libgdx.csc361_f18_g8.game.objects.GoldCoin;
 /**
  * Level design class
  * @author Connor Orischak
@@ -42,6 +45,9 @@ public class Level
 
 	// objects
 	public Array<Rock> rocks;
+	public BunnyHead bunnyHead;
+	public Array<GoldCoin> goldcoins;
+	public Array<Feather> feathers;
 	// decoration
 	public Clouds clouds;
 	public Mountains mountains;
