@@ -11,6 +11,9 @@ import com.libgdx.csc361_f18_g8.game.Assets;
  */
 public class Feather extends AbstractGameObject
 {
+	/**
+	 * instance variables exclusive to the feather
+	 */
 	private TextureRegion regFeather;
 	public boolean collected;
 
@@ -18,7 +21,11 @@ public class Feather extends AbstractGameObject
 	{
 		init();
 	}
-
+	/**
+	 * created boundaries
+	 * and confirmed that it
+	 * has not been collected
+	 */
 	private void init ()
 	{
 		dimension.set(0.5f, 0.5f);
@@ -27,7 +34,9 @@ public class Feather extends AbstractGameObject
 		bounds.set(0, 0, dimension.x, dimension.y);
 		collected = false;
 	}
-	
+	/**
+	 * draws the feather on the screen
+	 */
 	public void render (SpriteBatch batch) 
 	{
 		if (collected) return;
@@ -37,5 +46,13 @@ public class Feather extends AbstractGameObject
 				origin.x, origin.y, dimension.x, dimension.y, scale.x, scale.y,
 				rotation, reg.getRegionX(), reg.getRegionY(),
 				reg.getRegionWidth(), reg.getRegionHeight(), false, false);
+	}
+	/**
+	 * adds a score of 250 
+	 * @return 250
+	 */
+	public int getScore() 
+	{
+		return 250;
 	}
 }
