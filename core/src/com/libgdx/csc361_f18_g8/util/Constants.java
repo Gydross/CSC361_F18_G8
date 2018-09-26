@@ -21,6 +21,12 @@ public class Constants
     
     // Location of description file for sprite sheet
     public static final String TEXTURE_ATLAS_OBJECTS = "images/canyonbunny.atlas";
+    public static final String TEXTURE_ATLAS_UI = "images/canyonbunny-ui.atlas";
+    public static final String TEXTURE_ATLAS_LIBGDX_UI = "images/uiskin.atlas";
+    
+    // Location of description file for skins
+    public static final String SKIN_LIBGDX_UI = "images/uiskin.json";
+    public static final String SKIN_CANYONBUNNY_UI = "images/canyonbunny-ui.json";
     
     // Location of image file for level 1
     public static final String LEVEL_01 = "levels/level-01.png";
