@@ -39,4 +39,7 @@ public class Constants
     
     // Delay after game over
     public static final float TIME_DELAY_GAME_OVER = 3;
+
+    // Stores game preferences
+    public static final String PREFERENCES = "prefs.ini";
 }
