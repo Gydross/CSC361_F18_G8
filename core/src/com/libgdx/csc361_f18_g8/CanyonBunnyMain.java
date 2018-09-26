@@ -1,20 +1,44 @@
 package com.libgdx.csc361_f18_g8;
 
-import com.badlogic.gdx.ApplicationListener;
+//import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.libgdx.csc361_f18_g8.game.WorldController;
-import com.libgdx.csc361_f18_g8.game.WorldRenderer;
 import com.badlogic.gdx.assets.AssetManager;
 import com.libgdx.csc361_f18_g8.game.Assets;
+import com.libgdx.csc361_f18_g8.screens.MenuScreen;
+
+// Old imports, maintained for reference WRT deprecated code
+//import com.badlogic.gdx.graphics.GL20;
+//import com.libgdx.csc361_f18_g8.game.WorldController;
+//import com.libgdx.csc361_f18_g8.game.WorldRenderer;
+//import com.libgdx.csc361_f18_g8.game.Assets;
+
 
 /**
- * CanyonBunnyMain The core of the game; handles renderer updates and automates
- * asset disposal.
+ * Reduced in Chapter 7 to a simple create() method;
+ *   deprecated code may be found in the large comment block at line 41.
  * 
  * @author Aaron Wink
  */
+
+public class CanyonBunnyMain extends Game
+{
+    @Override
+    public void create()
+    {
+        // Set Libgdx log level
+        Gdx.app.setLogLevel(Application.LOG_DEBUG);
+        
+        // Load assets
+        Assets.instance.init(new AssetManager());
+        
+        // Start game at menu screen
+        setScreen(new MenuScreen(this));
+    }
+}
+
+/**
 public class CanyonBunnyMain implements ApplicationListener
 {
 	private static final String TAG = CanyonBunnyMain.class.getName();
@@ -27,7 +51,7 @@ public class CanyonBunnyMain implements ApplicationListener
 	/**
 	 * create - Called at game start; loads assets, instantiates worldController and
 	 * worldRenderer, and sets the game to unpaused.
-	 */
+	 *
 	@Override
 	public void create()
 	{
@@ -48,7 +72,7 @@ public class CanyonBunnyMain implements ApplicationListener
 	/**
 	 * Calls on worldController to update the game and worldRenderer to update the
 	 * display.
-	 */
+	 *
 	@Override
 	public void render()
 	{
@@ -76,7 +100,7 @@ public class CanyonBunnyMain implements ApplicationListener
 	 * 
 	 * @param width - Desired viewport width
 	 * @param height - Desired viewport height
-	 */
+	 *
 	@Override
 	public void resize(int width, int height)
 	{
@@ -85,7 +109,7 @@ public class CanyonBunnyMain implements ApplicationListener
 
 	/**
 	 * pause - Pauses the game.
-	 */
+	 *
 	@Override
 	public void pause()
 	{
@@ -94,7 +118,7 @@ public class CanyonBunnyMain implements ApplicationListener
 
 	/**
 	 * resume - Unpauses the game.
-	 */
+	 *
 	@Override
 	public void resume()
 	{
@@ -103,7 +127,7 @@ public class CanyonBunnyMain implements ApplicationListener
 
 	/**
 	 * dispose - Clears out unused resources and frees memory.
-	 */
+	 *
 	@Override
 	public void dispose()
 	{
@@ -111,3 +135,4 @@ public class CanyonBunnyMain implements ApplicationListener
 		Assets.instance.dispose();
 	}
 }
+*/
