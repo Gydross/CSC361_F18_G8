@@ -3,9 +3,11 @@ package com.libgdx.csc361_f18_g8.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import com.libgdx.csc361_f18_g8.util.Constants;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 /**
@@ -161,11 +163,59 @@ public class WorldRenderer implements Disposable
         // Draw collected gold coins icon and text
         renderGuiScore(batch);
         
+        // Draw collected feather icon
+        renderGuiFeatherPowerup(batch);
+        
         // Draw extra lives icons
         renderGuiExtraLive(batch);
         
         // Draw FPS counter
         renderGuiFpsCounter(batch);
+        
+        // Draw game over text
+        renderGuiGameOverMessage(batch);
+        
         batch.end();
+    }
+    
+    /**
+     * Renders the words "GAME OVER" upon running out of lives.
+     */
+    private void renderGuiGameOverMessage(SpriteBatch batch)
+    {
+        float x = cameraGUI.viewportWidth / 2;
+        float y = cameraGUI.viewportHeight / 2;
+        if (worldController.isGameOver())
+        {
+            BitmapFont fontGameOver = Assets.instance.fonts.defaultBig;
+            fontGameOver.setColor(1, 0.75f, 0.25f, 1);
+            fontGameOver.draw(batch, "GAME OVER", x, y, 0.0f, Align.center, false);
+            fontGameOver.setColor(1,1,1,1);
+        }
+    }
+    
+    /**
+     * Checks how much time is remaining on the feather powerup, and makes its icon
+     *   flash when there are less than four seconds remaining in its use.
+     */
+    private void renderGuiFeatherPowerup(SpriteBatch batch)
+    {
+        float x= -15;
+        float y = 30;
+        float timeLeftFeatherPowerup = worldController.level.bunnyHead.timeLeftFeatherPowerup;
+        
+        if (timeLeftFeatherPowerup > 0)
+        {
+            // Start icon fade in/out if the time remaining is less than
+            //   four seconds. The fade interval is set to 5 changes/sec.
+            if (timeLeftFeatherPowerup < 4)
+            {
+                if (((int) (timeLeftFeatherPowerup * 5) % 2) != 0)
+                    batch.setColor(1,1,1,0.5f);
+            }
+            batch.draw(Assets.instance.feather.feather, x, y, 50, 50, 100, 100, 0.35f, -0.35f, 0);
+            batch.setColor(1,1,1,1);
+            Assets.instance.fonts.defaultSmall.draw(batch, "" + (int)timeLeftFeatherPowerup, x+60, y+57);
+        }
     }
 }
