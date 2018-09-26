@@ -2,6 +2,8 @@ package com.libgdx.csc361_f18_g8.game;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Game;
+import com.libgdx.csc361_f18_g8.screens.MenuScreen;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -34,6 +36,14 @@ public class WorldController extends InputAdapter
 	public CameraHelper cameraHelper;
 	private float timeLeftGameOverDelay;
 
+	private Game game;
+	
+	private void backToMenu()
+	{
+	    // Switch to the menu screen
+	    game.setScreen(new MenuScreen(game));
+	}
+	
 	/**
 	 * Chapter 6 updates
 	 */
@@ -139,10 +149,12 @@ public class WorldController extends InputAdapter
 		}
 	}
 
-	public WorldController() 
+	public WorldController(Game game) 
 	{
+	    this.game = game;
 		init();
 	}
+	
 	private void init() 
 	{
 		Gdx.input.setInputProcessor(this);
@@ -151,9 +163,11 @@ public class WorldController extends InputAdapter
 		timeLeftGameOverDelay = 0;
 		initLevel();
 	}
+	
 	public Level level;
 	public int lives;
 	public int score;
+	
 	private void initLevel () 
 	{
 		score = 0;
@@ -225,7 +239,7 @@ public class WorldController extends InputAdapter
 		if (isGameOver()) 
 		{
 			timeLeftGameOverDelay -= deltaTime;
-			if (timeLeftGameOverDelay < 0) init();
+			if (timeLeftGameOverDelay < 0) backToMenu();
 		} 
 		else 
 		{
@@ -321,27 +335,11 @@ public class WorldController extends InputAdapter
 					? null: level.bunnyHead);
 			Gdx.app.debug(TAG, "Camera follow enabled: "
 					+ cameraHelper.hasTarget());
+		} else if (keycode == Keys.ESCAPE || keycode == Keys.BACK) {
+		    // Back to the menu
+		    backToMenu();
 		}
-		//		else if (keycode == Keys.SPACE)
-		//		{
-		//			// Select next sprite
-		//			selectedSprite = (selectedSprite +1) % testSprites.length;
-		//			// Update camera's target to follow the currently
-		//			// selected sprite
-		//			if (cameraHelper.hasTarget())
-		//			{
-		//				cameraHelper.setTarget(testSprites[selectedSprite]);
-		//			}
-		//			Gdx.app.debug(TAG, "Sprite #"+selectedSprite+" selected.");
-		//			
-		//		}
-		//		// Toggle camera follow
-		//		else if (keycode == Keys.ENTER)
-		//		{
-		//			cameraHelper.setTarget(cameraHelper.hasTarget() ? null :
-		//				testSprites[selectedSprite]);
-		//			Gdx.app.debug(TAG, "Camera follow enabled: " +cameraHelper.hasTarget());
-		//		}
+
 		return false;
 	}
 
