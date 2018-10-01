@@ -9,6 +9,7 @@ import com.libgdx.csc361_f18_g8.util.Constants;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.libgdx.csc361_f18_g8.util.GamePreferences;
 
 /**
  * WorldRenderer Renders the game world. Also initializes the camera position
@@ -170,7 +171,8 @@ public class WorldRenderer implements Disposable
         renderGuiExtraLive(batch);
         
         // Draw FPS counter
-        renderGuiFpsCounter(batch);
+        if (GamePreferences.instance.showFpsCounter)
+            renderGuiFpsCounter(batch);
         
         // Draw game over text
         renderGuiGameOverMessage(batch);
