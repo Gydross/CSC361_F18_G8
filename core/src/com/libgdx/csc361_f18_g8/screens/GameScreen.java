@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.libgdx.csc361_f18_g8.game.WorldController;
 import com.libgdx.csc361_f18_g8.game.WorldRenderer;
+import com.libgdx.csc361_f18_g8.util.GamePreferences;
 
 /**
  * Contains the majority of CanyonBunnyMain's old functionality;
@@ -62,6 +63,7 @@ public class GameScreen extends AbstractGameScreen
     @Override
     public void show()
     {
+        GamePreferences.instance.load();
         worldController = new WorldController(game);
         worldRenderer = new WorldRenderer(worldController);
         Gdx.input.setCatchBackKey(true);
