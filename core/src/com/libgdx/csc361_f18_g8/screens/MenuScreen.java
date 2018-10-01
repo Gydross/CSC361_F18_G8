@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.libgdx.csc361_f18_g8.game.Assets;
 import com.libgdx.csc361_f18_g8.util.CharacterSkin;
 import com.libgdx.csc361_f18_g8.util.Constants;
+import com.libgdx.csc361_f18_g8.util.GamePreferences;
 /**
  * A class for the menu screen that will display options
  * for the player to choose.
@@ -36,6 +37,7 @@ public class MenuScreen extends AbstractGameScreen
 
 	private Stage stage;
 	private Skin skinCanyonBunny;
+	private Skin skinLibgdx;
 
 	// menu
 	private Image imgBackground;
@@ -68,7 +70,11 @@ public class MenuScreen extends AbstractGameScreen
 	{
 		super(game);
 	}
-
+	
+	/**
+	 * draws the current table or menu
+	 * to be displayed
+	 */
 	@Override
 	public void render(float deltaTime)
 	{
@@ -85,12 +91,201 @@ public class MenuScreen extends AbstractGameScreen
 		}
 		stage.act(deltaTime);
 		stage.draw();
-		Table.drawDebug(stage);
+		//Table.drawDebug(stage);
+	}
+	/**
+	 * p253 starts here
+	 */
+	private void loadSettings() 
+	{
+		GamePreferences prefs = GamePreferences.instance;
+		prefs.load();
+		chkSound.setChecked(prefs.sound);
+		sldSound.setValue(prefs.volSound);
+		chkMusic.setChecked(prefs.music);
+		sldMusic.setValue(prefs.volMusic);
+		selCharSkin.setSelectedIndex(prefs.charSkin);
+		onCharSkinSelected(prefs.charSkin);
+		chkShowFpsCounter.setChecked(prefs.showFpsCounter);
+	}
+	/**
+	 * saves the selected settings
+	 */
+	private void saveSettings()
+	{
+		GamePreferences prefs = GamePreferences.instance;
+		prefs.sound = chkSound.isChecked();
+		prefs.volSound = sldSound.getValue();
+		prefs.music = chkMusic.isChecked();
+		prefs.volMusic = sldMusic.getValue();
+		prefs.charSkin = selCharSkin.getSelectedIndex();
+		prefs.showFpsCounter = chkShowFpsCounter.isChecked();
+		prefs.save();
+	}
+
+	/**
+	 * sets the color of the bunny
+	 * @param index
+	 */
+	private void onCharSkinSelected(int index)
+	{
+		CharacterSkin skin = CharacterSkin.values()[index];
+		imgCharSkin.setColor(skin.getColor());
+	}
+
+	/**
+	 * allows the save button to be clicked
+	 */
+	private void onSaveClicked() 
+	{
+		saveSettings();
+		onCancelClicked();
+	}
+
+	/**
+	 * cancels changes and goes back to the menu
+	 */
+	private void onCancelClicked() 
+	{
+		btnMenuPlay.setVisible(true);
+		btnMenuOptions.setVisible(true);
+		winOptions.setVisible(false);
+	}
+
+	/**
+	 * builds the audio settings menu
+	 * @return audio menu
+	 */
+	private Table buildOptWinAudioSettings () 
+	{
+		Table tbl = new Table();
+		// + Title: "Audio"
+		tbl.pad(10, 10, 0, 10);
+		tbl.add(new Label("Audio", skinLibgdx, "default-font",
+				Color.ORANGE)).colspan(3);
+		tbl.row();
+		tbl.columnDefaults(0).padRight(10);
+		tbl.columnDefaults(1).padRight(10);
+		// + Checkbox, "Sound" label, sound volume slider
+		chkSound = new CheckBox("", skinLibgdx);
+		tbl.add(chkSound);
+		tbl.add(new Label("Sound", skinLibgdx));
+		sldSound = new Slider(0.0f, 1.0f, 0.1f, false, skinLibgdx);
+		tbl.add(sldSound);
+		tbl.row();
+		// + Checkbox, "Music" label, music volume slider
+		chkMusic = new CheckBox("", skinLibgdx);
+		tbl.add(chkMusic);
+		tbl.add(new Label("Music", skinLibgdx));
+		sldMusic = new Slider(0.0f, 1.0f, 0.1f, false, skinLibgdx);
+		tbl.add(sldMusic);
+		tbl.row();
+		return tbl;
+	}
+
+	/**
+	 * builds the skin selection screen
+	 * @return skin menu
+	 */
+	private Table buildOptWinSkinSelection () 
+	{
+		Table tbl = new Table();
+		// + Title: "Character Skin"
+		tbl.pad(10, 10, 0, 10);
+		tbl.add(new Label("Character Skin", skinLibgdx,
+				"default-font", Color.ORANGE)).colspan(2);
+		tbl.row();
+		// + Drop down box filled with skin items
+		selCharSkin = new SelectBox<CharacterSkin>(skinLibgdx);
+		selCharSkin.setItems(CharacterSkin.values());
+		selCharSkin.addListener(new ChangeListener()
+		{
+			@Override
+			public void changed(ChangeEvent event, Actor actor) 
+			{
+				onCharSkinSelected(((SelectBox<CharacterSkin>)
+						actor).getSelectedIndex());
+			}
+		});
+		tbl.add(selCharSkin).width(120).padRight(20);
+		// + Skin preview image
+		imgCharSkin = new Image(Assets.instance.bunny.head);
+		tbl.add(imgCharSkin).width(50).height(50);
+		return tbl;
+	}
+
+	/**
+	 * contains debug settings
+	 * @return
+	 */
+	private Table buildOptWinDebug ()
+	{
+		Table tbl = new Table();
+		// + Title: "Debug"
+		tbl.pad(10, 10, 0, 10);
+		tbl.add(new Label("Debug", skinLibgdx, "default-font",
+				Color.RED)).colspan(3);
+		tbl.row();
+		tbl.columnDefaults(0).padRight(10);
+		tbl.columnDefaults(1).padRight(10);
+		// + Checkbox, "Show FPS Counter" label
+		chkShowFpsCounter = new CheckBox("", skinLibgdx);
+		tbl.add(new Label("Show FPS Counter", skinLibgdx));
+		tbl.add(chkShowFpsCounter);
+		tbl.row();
+		return tbl;
+	}
+
+	/**
+	 * this method builds a table that contains
+	 * a separator and the save and cancel buttons
+	 * @return
+	 */
+	private Table buildOptWinButtons ()
+	{
+		Table tbl = new Table();
+		// + Separator
+		Label lbl = null;
+		lbl = new Label("", skinLibgdx);
+		lbl.setColor(0.75f, 0.75f, 0.75f, 1);
+		lbl.setStyle(new LabelStyle(lbl.getStyle()));
+		lbl.getStyle().background = skinLibgdx.newDrawable("white");
+		tbl.add(lbl).colspan(2).height(1).width(220).pad(0, 0, 0, 1);
+		tbl.row();
+		lbl = new Label("", skinLibgdx);
+		lbl.setColor(0.5f, 0.5f, 0.5f, 1);
+		lbl.setStyle(new LabelStyle(lbl.getStyle()));
+		lbl.getStyle().background = skinLibgdx.newDrawable("white");
+		tbl.add(lbl).colspan(2).height(1).width(220).pad(0, 1, 5, 0);
+		tbl.row();
+		// + Save Button with event handler
+		btnWinOptSave = new TextButton("Save", skinLibgdx);
+		tbl.add(btnWinOptSave).padRight(30);
+		btnWinOptSave.addListener(new ChangeListener()
+		{
+			@Override
+			public void changed (ChangeEvent event, Actor actor) 
+			{
+				onSaveClicked();
+			}
+		});
+		// + Cancel Button with event handler
+		btnWinOptCancel = new TextButton("Cancel", skinLibgdx);
+		tbl.add(btnWinOptCancel);
+		btnWinOptCancel.addListener(new ChangeListener()
+		{
+			@Override
+			public void changed (ChangeEvent event, Actor actor)
+			{
+				onCancelClicked();
+			}
+		});
+		return tbl;
 	}
 
 
 	/**
-	 * 
+	 * sets the boundaries of the menu
 	 */
 	@Override
 	public void resize(int width, int height)
@@ -117,6 +312,7 @@ public class MenuScreen extends AbstractGameScreen
 	{
 		stage.dispose();
 		skinCanyonBunny.dispose();
+		skinLibgdx.dispose();
 	}
 
 	/**
@@ -136,6 +332,9 @@ public class MenuScreen extends AbstractGameScreen
 		skinCanyonBunny = new Skin(
 				Gdx.files.internal(Constants.SKIN_CANYONBUNNY_UI),
 				new TextureAtlas(Constants.TEXTURE_ATLAS_UI));
+		skinLibgdx = new Skin
+				(Gdx.files.internal(Constants.SKIN_LIBGDX_UI),
+						new TextureAtlas(Constants.TEXTURE_ATLAS_LIBGDX_UI));
 		// build all layers
 		Table layerBackground = buildBackgroundLayer();
 		Table layerObjects = buildObjectsLayer();
@@ -194,6 +393,11 @@ public class MenuScreen extends AbstractGameScreen
 		if (debugEnabled) layer.debug();
 		return layer;
 	}
+	
+	/**
+	 * adds the play and options button
+	 * @return
+	 */
 	private Table buildControlsLayer ()
 	{
 		Table layer = new Table();
@@ -224,14 +428,43 @@ public class MenuScreen extends AbstractGameScreen
 		if (debugEnabled) layer.debug();
 		return layer;
 	}
+	/**
+	 * build the options menu
+	 * @return
+	 */
 	private Table buildOptionsWindowLayer () 
 	{
-		Table layer = new Table();
-		return layer;
+		winOptions = new Window("Options", skinLibgdx);
+		// + Audio Settings: Sound/Music CheckBox and Volume Slider
+		winOptions.add(buildOptWinAudioSettings()).row();
+		// + Character Skin: Selection Box (White, Gray, Brown)
+		winOptions.add(buildOptWinSkinSelection()).row();
+		// + Debug: Show FPS Counter
+		winOptions.add(buildOptWinDebug()).row();
+		// + Separator and Buttons (Save, Cancel)
+		winOptions.add(buildOptWinButtons()).pad(10, 0, 10, 0);
+		// Make options window slightly transparent
+		winOptions.setColor(1, 1, 1, 0.8f);
+		// Hide options window by default
+		winOptions.setVisible(false);
+		if (debugEnabled) winOptions.debug();
+		// Let TableLayout recalculate widget sizes and positions
+		winOptions.pack();
+		// Move options window to bottom right corner
+		winOptions.setPosition
+		(Constants.VIEWPORT_GUI_WIDTH - winOptions.getWidth() - 50,
+				50);
+		return winOptions;
 	}
 	private void onPlayClicked () 
 	{
 		game.setScreen(new GameScreen(game));
 	}
-	private void onOptionsClicked () { }
+	private void onOptionsClicked () 
+	{
+		 loadSettings();
+		 btnMenuPlay.setVisible(false);
+		 btnMenuOptions.setVisible(false);
+		 winOptions.setVisible(true);
+	}
 }
