@@ -7,6 +7,8 @@ import com.libgdx.csc361_f18_g8.game.Assets;
 import com.libgdx.csc361_f18_g8.util.Constants;
 import com.libgdx.csc361_f18_g8.util.CharacterSkin;
 import com.libgdx.csc361_f18_g8.util.GamePreferences;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 
 public class BunnyHead extends AbstractGameObject
 {
@@ -26,6 +28,8 @@ public class BunnyHead extends AbstractGameObject
     public JUMP_STATE jumpState;
     public boolean hasFeatherPowerup;
     public float timeLeftFeatherPowerup;
+    
+    public ParticleEffect dustParticles = new ParticleEffect();
     
     /**
      * BunnyHead creation method
@@ -65,6 +69,9 @@ public class BunnyHead extends AbstractGameObject
         // Powerups
         hasFeatherPowerup = false;
         timeLeftFeatherPowerup = 0;
+        
+        // Particles
+        dustParticles.load(Gdx.files.internal("../core/assets/particles/dustParticle.pfx"), Gdx.files.internal("particles"));
     }
     
     /**
@@ -147,6 +154,7 @@ public class BunnyHead extends AbstractGameObject
                 setFeatherPowerup(false);
             }
         }
+        dustParticles.update(deltaTime);
     }
     
     /**
@@ -189,13 +197,19 @@ public class BunnyHead extends AbstractGameObject
                 break;
         }
         if (jumpState != JUMP_STATE.GROUNDED)
+        {
+            dustParticles.allowCompletion();
             super.updateMotionY(deltaTime);
+        }
     }
     
     @Override
     public void render (SpriteBatch batch)
     {
         TextureRegion reg = null;
+        
+        // Draw Particles
+        dustParticles.draw(batch);
         
         // Apply skin color
         batch.setColor(CharacterSkin.values()[GamePreferences.instance.charSkin].getColor());
