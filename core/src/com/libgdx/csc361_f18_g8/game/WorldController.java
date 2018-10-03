@@ -38,6 +38,9 @@ public class WorldController extends InputAdapter
 
 	private Game game;
 	
+	public float livesVisual;
+	public float scoreVisual;
+	
 	private void backToMenu()
 	{
 	    // Switch to the menu screen
@@ -160,6 +163,7 @@ public class WorldController extends InputAdapter
 		Gdx.input.setInputProcessor(this);
 		cameraHelper = new CameraHelper();
 		lives = Constants.LIVES_START;
+		livesVisual = lives;
 		timeLeftGameOverDelay = 0;
 		initLevel();
 	}
@@ -256,6 +260,10 @@ public class WorldController extends InputAdapter
 			else
 				initLevel();
 		}
+		level.mountains.updateScrollPosition(cameraHelper.getPosition());
+		if (livesVisual > lives)
+		    livesVisual = Math.max(lives, livesVisual - 1 * deltaTime);
+		scoreVisual = Math.min(score, scoreVisual + 250 * deltaTime);
 	}
 	private void handleDebugInput(float deltaTime)
 	{

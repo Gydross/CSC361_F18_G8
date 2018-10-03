@@ -89,6 +89,14 @@ public class Mountains extends AbstractGameObject
 		// distant mountains (light gray)
 		drawMountain(batch, 0.0f, 0.0f, 0.9f, 0.3f);
 	}
-		
+
+	/**
+	 * Updates the position of the mountains in the world depending on its parallax scroll speed.
+	 * @param camPosition: The new x position of the mountains
+	 */
+	public void updateScrollPosition(Vector2 camPosition)
+	{
+	    position.set(camPosition.x, position.y);
+	}
 	
 }
