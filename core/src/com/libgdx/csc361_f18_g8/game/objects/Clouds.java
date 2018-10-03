@@ -57,6 +57,11 @@ public class Clouds extends AbstractGameObject
 		}
 	}
 
+	/**
+	 * creates a cloud that makes use of a simple 
+	 * physics simulation code
+	 * @return
+	 */
 	private Cloud spawnCloud () {
 		Cloud cloud = new Cloud();
 		cloud.dimension.set(dimension);
@@ -69,6 +74,15 @@ public class Clouds extends AbstractGameObject
 		pos.y += MathUtils.random(0.0f, 0.2f)
 				* (MathUtils.randomBoolean() ? 1 : -1); // random additional position
 		cloud.position.set(pos);
+		cloud.position.set(pos);
+		// speed
+		Vector2 speed = new Vector2();
+		speed.x += 0.5f; // base speed
+		// random additional speed
+		speed.x += MathUtils.random(0.0f, 0.75f);
+		cloud.terminalVelocity.set(speed);
+		speed.x *= -1; // move left
+		cloud.velocity.set(speed);
 		return cloud;
 	}
 	@Override
@@ -78,6 +92,25 @@ public class Clouds extends AbstractGameObject
 			cloud.render(batch);
 	}
 
+	/**
+	 * updates the location of the clouds
+	 * by letting the physics move them
+	 */
+	@Override
+	public void update (float deltaTime) {
+		for (int i = clouds.size - 1; i>= 0; i--) 
+		{
+			Cloud cloud = clouds.get(i);
+			cloud.update(deltaTime);
+			if (cloud.position.x< -10)
+			{
+				// cloud moved outside of world.
+				// destroy and spawn new cloud at end of level.
+				clouds.removeIndex(i);
+				clouds.add(spawnCloud());
+			}
+		}
+	}
 }
 
 
