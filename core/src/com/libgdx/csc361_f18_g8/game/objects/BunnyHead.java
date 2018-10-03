@@ -71,7 +71,7 @@ public class BunnyHead extends AbstractGameObject
         timeLeftFeatherPowerup = 0;
         
         // Particles
-        dustParticles.load(Gdx.files.internal("../core/assets/particles/dustParticle.pfx"), Gdx.files.internal("particles"));
+        dustParticles.load(Gdx.files.internal("particles/dust.pfx"), Gdx.files.internal("particles"));
     }
     
     /**
