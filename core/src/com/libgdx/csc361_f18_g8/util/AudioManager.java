@@ -42,6 +42,10 @@ public class AudioManager
 				pitch, pan);
 	}
 
+	/**
+	 * stops the current song and plays the new one
+	 * @param music
+	 */
 	public void play (Music music) 
 	{
 		stopMusic();
@@ -52,17 +56,27 @@ public class AudioManager
 			music.play();
 		}
 	}
+	/**
+	 * stops the music currently playing
+	 */
 	public void stopMusic () 
 	{
 		if (playingMusic != null) playingMusic.stop();
 	}
+	
+	/**
+	 * pauses or plays music on setting window call
+	 */
 	public void onSettingsUpdated () 
 	{
 		if (playingMusic == null) return;
 		playingMusic.setVolume(GamePreferences.instance.volMusic);
-		if (GamePreferences.instance.music) {
+		if (GamePreferences.instance.music)
+		{
 			if (!playingMusic.isPlaying()) playingMusic.play();
-		} else {
+		} 
+		else 
+		{
 			playingMusic.pause();
 		}
 	}
