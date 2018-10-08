@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 
 /**
  * Assets class from pages 149-156
@@ -22,8 +24,10 @@ public class Assets implements Disposable, AssetErrorListener
 {
     public static final String TAG      = Assets.class.getName();
     public static final Assets instance = new Assets();
+    public AssetSounds sounds;
+    public AssetMusic music;
     
-    private AssetManager assetManager;
+    public AssetManager assetManager;
     
     // singleton: prevent instantiation from other classes
     
@@ -50,9 +54,9 @@ public class Assets implements Disposable, AssetErrorListener
         public AssetFonts() 
         {
             // Create three fonts using LibGDX's 15px bitmap font
-            defaultSmall = new BitmapFont(Gdx.files.internal("../core/assets/font/arial-15.fnt"), true);
-            defaultNormal = new BitmapFont(Gdx.files.internal("../core/assets/font/arial-15.fnt"), true);
-            defaultBig = new BitmapFont(Gdx.files.internal("../core/assets/font/arial-15.fnt"), true);
+            defaultSmall = new BitmapFont(Gdx.files.internal("font/arial-15.fnt"), true);
+            defaultNormal = new BitmapFont(Gdx.files.internal("font/arial-15.fnt"), true);
+            defaultBig = new BitmapFont(Gdx.files.internal("font/arial-15.fnt"), true);
             
             // Set font sizes
             // The errors lie, this method is DEFINITELY defined within BitmapFont.class as setScale(ScaleXY).
@@ -78,6 +82,16 @@ public class Assets implements Disposable, AssetErrorListener
         // load texture atlas
         assetManager.load(Constants.TEXTURE_ATLAS_OBJECTS, TextureAtlas.class);
         
+        // Load sounds into engine
+        assetManager.load("sounds/jump.wav", Sound.class);
+        assetManager.load("sounds/jump_with_feather.wav", Sound.class);
+        assetManager.load("sounds/pickup_coin.wav", Sound.class);
+        assetManager.load("sounds/pickup_feather.wav", Sound.class);
+        assetManager.load("sounds/jump.wav", Sound.class);
+        
+        // Load music into engine
+        assetManager.load("music/keith303_-_brand_new_highscore.mp3", Music.class);
+        
         // start loading assets and wait until finished
         assetManager.finishLoading();
         Gdx.app.debug(TAG, "# of assets loaded: " + assetManager.getAssetNames().size);
@@ -88,7 +102,6 @@ public class Assets implements Disposable, AssetErrorListener
         }
         
         TextureAtlas atlas = assetManager.get(Constants.TEXTURE_ATLAS_OBJECTS);
-        
         
         // enable texture filtering for pixel smoothing
         for (Texture t : atlas.getTextures())
@@ -103,6 +116,8 @@ public class Assets implements Disposable, AssetErrorListener
         goldCoin = new AssetGoldCoin(atlas);
         feather = new AssetFeather(atlas);
         levelDecoration = new AssetLevelDecoration(atlas);
+        sounds = new AssetSounds(assetManager);
+        music = new AssetMusic(assetManager);
     }
     
     
@@ -208,6 +223,41 @@ public class Assets implements Disposable, AssetErrorListener
             mountainLeft = atlas.findRegion("mountain_left");
             mountainRight = atlas.findRegion("mountain_right");
             waterOverlay = atlas.findRegion("water_overlay");
+        }
+    }
+    
+    /**
+     * Loads sound effects into the game engine and assigns them to instances
+     */
+    public class AssetSounds
+    {
+        public final Sound jump;
+        public final Sound jumpWithFeather;
+        public final Sound pickupCoin;
+        public final Sound pickupFeather;
+        public final Sound liveLost;
+        
+        public AssetSounds(AssetManager am)
+        {
+            jump = am.get("sounds/jump.wav", Sound.class);
+            jumpWithFeather = am.get("sounds/jump_with_feather.wav", Sound.class);
+            pickupCoin = am.get("sounds/pickup_coin.wav", Sound.class);
+            pickupFeather = am.get("sounds/pickup_feather.wav", Sound.class);
+            liveLost = am.get("sounds/jump.wav", Sound.class);
+        }
+    }
+    
+    
+    /**
+     * Loads music into game engine and assigns it to an instance
+     */
+    public class AssetMusic
+    {
+        public final Music song01;
+        
+        public AssetMusic(AssetManager am)
+        {
+            song01 = am.get("music/keith303_-_brand_new_highscore.mp3", Music.class);
         }
     }
 }

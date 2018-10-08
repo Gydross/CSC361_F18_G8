@@ -9,6 +9,10 @@ import com.libgdx.csc361_f18_g8.util.CharacterSkin;
 import com.libgdx.csc361_f18_g8.util.GamePreferences;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+//Ch10
+import com.badlogic.gdx.math.MathUtils;
+import com.libgdx.csc361_f18_g8.util.AudioManager;
+
 
 public class BunnyHead extends AbstractGameObject
 {
@@ -86,6 +90,8 @@ public class BunnyHead extends AbstractGameObject
             case GROUNDED:  // Character is standing on a platform
                 if (jumpKeyPressed)
                 {
+                	AudioManager.instance.play(Assets.instance.sounds.jump);
+
                     // Start counting jump time from the beginning
                     timeJumping = 0;
                     jumpState = JUMP_STATE.JUMP_RISING;
@@ -101,6 +107,9 @@ public class BunnyHead extends AbstractGameObject
             case JUMP_FALLING:  // Falling down after jump
                 if (jumpKeyPressed && hasFeatherPowerup)
                 {
+                	AudioManager.instance.play(
+                			 Assets.instance.sounds.jumpWithFeather, 1,
+                			MathUtils.random(1.0f, 1.1f));
                     timeJumping = JUMP_TIME_OFFSET_FLYING;
                     jumpState = JUMP_STATE.JUMP_RISING;
                 }

@@ -21,6 +21,7 @@ import com.libgdx.csc361_f18_g8.game.objects.BunnyHead;
 import com.libgdx.csc361_f18_g8.game.objects.BunnyHead.JUMP_STATE;
 import com.libgdx.csc361_f18_g8.game.objects.Feather;
 import com.libgdx.csc361_f18_g8.game.objects.GoldCoin;
+import com.libgdx.csc361_f18_g8.util.AudioManager;
 
 /**
  * WorldController
@@ -99,6 +100,7 @@ public class WorldController extends InputAdapter
 	private void onCollisionBunnyWithGoldCoin(GoldCoin goldcoin) 
 	{
 		goldcoin.collected = true;
+		AudioManager.instance.play(Assets.instance.sounds.pickupCoin);
 		score += goldcoin.getScore();
 		Gdx.app.log(TAG, "Gold coin collected");
 	}
@@ -109,6 +111,7 @@ public class WorldController extends InputAdapter
 	private void onCollisionBunnyWithFeather(Feather feather) 
 	{
 		feather.collected = true;
+		AudioManager.instance.play(Assets.instance.sounds.pickupFeather);
 		score += feather.getScore();
 		level.bunnyHead.setFeatherPowerup(true);
 		Gdx.app.log(TAG, "Feather collected");
@@ -254,6 +257,7 @@ public class WorldController extends InputAdapter
 		cameraHelper.update(deltaTime);
 		if (!isGameOver() && isPlayerInWater()) 
 		{
+		    AudioManager.instance.play(Assets.instance.sounds.liveLost);
 			lives--;
 			if (isGameOver())
 				timeLeftGameOverDelay = Constants.TIME_DELAY_GAME_OVER;
