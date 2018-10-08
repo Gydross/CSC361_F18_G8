@@ -27,7 +27,7 @@ public class Assets implements Disposable, AssetErrorListener
     public AssetSounds sounds;
     public AssetMusic music;
     
-    private AssetManager assetManager;
+    public AssetManager assetManager;
     
     // singleton: prevent instantiation from other classes
     
@@ -54,9 +54,9 @@ public class Assets implements Disposable, AssetErrorListener
         public AssetFonts() 
         {
             // Create three fonts using LibGDX's 15px bitmap font
-            defaultSmall = new BitmapFont(Gdx.files.internal("../core/assets/font/arial-15.fnt"), true);
-            defaultNormal = new BitmapFont(Gdx.files.internal("../core/assets/font/arial-15.fnt"), true);
-            defaultBig = new BitmapFont(Gdx.files.internal("../core/assets/font/arial-15.fnt"), true);
+            defaultSmall = new BitmapFont(Gdx.files.internal("font/arial-15.fnt"), true);
+            defaultNormal = new BitmapFont(Gdx.files.internal("font/arial-15.fnt"), true);
+            defaultBig = new BitmapFont(Gdx.files.internal("font/arial-15.fnt"), true);
             
             // Set font sizes
             // The errors lie, this method is DEFINITELY defined within BitmapFont.class as setScale(ScaleXY).
@@ -82,6 +82,16 @@ public class Assets implements Disposable, AssetErrorListener
         // load texture atlas
         assetManager.load(Constants.TEXTURE_ATLAS_OBJECTS, TextureAtlas.class);
         
+        // Load sounds into engine
+        assetManager.load("sounds/jump.wav", Sound.class);
+        assetManager.load("sounds/jump_with_feather.wav", Sound.class);
+        assetManager.load("sounds/pickup_coin.wav", Sound.class);
+        assetManager.load("sounds/pickup_feather.wav", Sound.class);
+        assetManager.load("sounds/jump.wav", Sound.class);
+        
+        // Load music into engine
+        assetManager.load("music/keith303_-_brand_new_highscore.mp3", Music.class);
+        
         // start loading assets and wait until finished
         assetManager.finishLoading();
         Gdx.app.debug(TAG, "# of assets loaded: " + assetManager.getAssetNames().size);
@@ -92,16 +102,6 @@ public class Assets implements Disposable, AssetErrorListener
         }
         
         TextureAtlas atlas = assetManager.get(Constants.TEXTURE_ATLAS_OBJECTS);
-        
-        // Load sounds into engine
-        assetManager.load("sounds/jump.wav", Sound.class);
-        assetManager.load("sounds/jump_with_feather.wav", Sound.class);
-        assetManager.load("sounds/pickup_coin.wav", Sound.class);
-        assetManager.load("sounds/pickup_feather.wav", Sound.class);
-        assetManager.load("sounds/jump.wav", Sound.class);
-        
-        // Load music into engine
-        assetManager.load("music/keith303_-_brand_new_highscore.mp3", Music.class);
         
         // enable texture filtering for pixel smoothing
         for (Texture t : atlas.getTextures())
