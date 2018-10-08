@@ -96,7 +96,8 @@ public class Rock extends AbstractGameObject
 		floatCycleTimeLeft -= deltaTime;
 		if (floatTargetPosition == null)
 			floatTargetPosition = new Vector2(position);
-		if (floatCycleTimeLeft<= 0) 
+		
+		if (floatCycleTimeLeft <= 0) 
 		{
 			floatCycleTimeLeft = FLOAT_CYCLE_TIME;
 			floatingDownwards = !floatingDownwards;
