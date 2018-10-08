@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.libgdx.csc361_f18_g8.game.Assets;
 import com.libgdx.csc361_f18_g8.screens.MenuScreen;
+import com.libgdx.csc361_f18_g8.util.AudioManager;
 import com.libgdx.csc361_f18_g8.util.GamePreferences;
 
 // Old imports, maintained for reference WRT deprecated code
