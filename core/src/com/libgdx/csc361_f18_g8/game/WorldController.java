@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.libgdx.csc361_f18_g8.util.CameraHelper;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.math.Rectangle;
 import com.libgdx.csc361_f18_g8.game.objects.Rock;
 import com.libgdx.csc361_f18_g8.util.Constants;
@@ -38,7 +39,7 @@ import com.libgdx.csc361_f18_g8.game.objects.Carrot;
  *   and establishes player controls.
  * @author Connor Orischak
  */
-public class WorldController extends InputAdapter
+public class WorldController extends InputAdapter implements Disposable 
 {
 	private static final String TAG = 
 			WorldController.class.getName();
@@ -59,6 +60,11 @@ public class WorldController extends InputAdapter
 	 * initPhysics creates a world with gravity
 	 * pulling things down at 9.81 meters per second
 	 */
+	@Override
+	public void dispose()
+	{
+		if (b2world != null) b2world.dispose();
+	}
 	private void initPhysics () {
 		if (b2world != null) b2world.dispose();
 		b2world = new World(new Vector2(0, -9.81f), true);
@@ -144,6 +150,8 @@ public class WorldController extends InputAdapter
 		spawnCarrots(centerPosBunnyHead, Constants.CARROTS_SPAWN_MAX,
 				Constants.CARROTS_SPAWN_RADIUS);
 	}
+
+
 	private void backToMenu()
 	{
 		// Switch to the menu screen
@@ -255,6 +263,14 @@ public class WorldController extends InputAdapter
 			onCollisionBunnyWithFeather(feather);
 			break;
 		}
+		// Test collision: Bunny Head <-> Goal
+		if (!goalReached)
+		{
+			r2.set(level.goal.bounds);
+			r2.x += level.goal.position.x;
+			r2.y += level.goal.position.y;
+			if (r1.overlaps(r2)) onCollisionBunnyWithGoal();
+		}
 	}
 
 	public WorldController(Game game) 
@@ -280,8 +296,11 @@ public class WorldController extends InputAdapter
 	private void initLevel () 
 	{
 		score = 0;
+		scoreVisual = score;
+		goalReached = false;
 		level = new Level(Constants.LEVEL_01);
 		cameraHelper.setTarget(level.bunnyHead);
+		initPhysics();
 	}
 	/**
 	 * Update Chapter 5:
@@ -345,7 +364,7 @@ public class WorldController extends InputAdapter
 	public void update(float deltaTime) 
 	{
 		handleDebugInput(deltaTime);
-		if (isGameOver()) 
+		if (isGameOver() || goalReached) 
 		{
 			timeLeftGameOverDelay -= deltaTime;
 			if (timeLeftGameOverDelay < 0) backToMenu();
@@ -356,6 +375,7 @@ public class WorldController extends InputAdapter
 		}
 		level.update(deltaTime);
 		testCollisions();
+		b2world.step(deltaTime, 8, 3);
 		cameraHelper.update(deltaTime);
 		if (!isGameOver() && isPlayerInWater()) 
 		{
