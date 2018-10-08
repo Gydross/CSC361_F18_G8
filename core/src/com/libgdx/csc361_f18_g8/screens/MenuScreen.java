@@ -25,6 +25,8 @@ import com.libgdx.csc361_f18_g8.game.Assets;
 import com.libgdx.csc361_f18_g8.util.CharacterSkin;
 import com.libgdx.csc361_f18_g8.util.Constants;
 import com.libgdx.csc361_f18_g8.util.GamePreferences;
+import com.libgdx.csc361_f18_g8.util.AudioManager;
+
 /**
  * A class for the menu screen that will display options
  * for the player to choose.
@@ -140,6 +142,7 @@ public class MenuScreen extends AbstractGameScreen
 	{
 		saveSettings();
 		onCancelClicked();
+		AudioManager.instance.onSettingsUpdated();
 	}
 
 	/**
@@ -150,6 +153,7 @@ public class MenuScreen extends AbstractGameScreen
 		btnMenuPlay.setVisible(true);
 		btnMenuOptions.setVisible(true);
 		winOptions.setVisible(false);
+		AudioManager.instance.onSettingsUpdated();
 	}
 
 	/**
