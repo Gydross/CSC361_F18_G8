@@ -22,6 +22,15 @@ import com.libgdx.csc361_f18_g8.game.objects.BunnyHead.JUMP_STATE;
 import com.libgdx.csc361_f18_g8.game.objects.Feather;
 import com.libgdx.csc361_f18_g8.game.objects.GoldCoin;
 import com.libgdx.csc361_f18_g8.util.AudioManager;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
+import com.libgdx.csc361_f18_g8.game.objects.Carrot;
+
 
 /**
  * WorldController
@@ -38,16 +47,46 @@ public class WorldController extends InputAdapter
 	private float timeLeftGameOverDelay;
 
 	private Game game;
-	
+
 	public float livesVisual;
 	public float scoreVisual;
-	
+	private boolean goalReached;
+	public World b2world;
+
+
+	/**
+	 * Chapter 11 code
+	 * initPhysics creates a world with gravity
+	 * pulling things down at 9.81 meters per second
+	 */
+	private void initPhysics () {
+		if (b2world != null) b2world.dispose();
+		b2world = new World(new Vector2(0, -9.81f), true);
+		// Rocks
+		Vector2 origin = new Vector2();
+		for (Rock rock : level.rocks) {
+			BodyDef bodyDef = new BodyDef();
+			bodyDef.type = BodyType.KinematicBody;
+			bodyDef.position.set(rock.position);
+			Body body = b2world.createBody(bodyDef);
+			rock.body = body;
+			PolygonShape polygonShape = new PolygonShape();
+			origin.x = rock.bounds.width / 2.0f;
+			origin.y = rock.bounds.height / 2.0f;
+			polygonShape.setAsBox(rock.bounds.width / 2.0f,
+					rock.bounds.height / 2.0f, origin, 0);
+			FixtureDef fixtureDef = new FixtureDef();
+			fixtureDef.shape = polygonShape;
+			body.createFixture(fixtureDef);
+			polygonShape.dispose();
+		}
+	}
 	private void backToMenu()
 	{
-	    // Switch to the menu screen
-	    game.setScreen(new MenuScreen(game));
+		// Switch to the menu screen
+		game.setScreen(new MenuScreen(game));
 	}
-	
+
 	/**
 	 * Chapter 6 updates
 	 */
@@ -157,10 +196,10 @@ public class WorldController extends InputAdapter
 
 	public WorldController(Game game) 
 	{
-	    this.game = game;
+		this.game = game;
 		init();
 	}
-	
+
 	private void init() 
 	{
 		Gdx.input.setInputProcessor(this);
@@ -170,11 +209,11 @@ public class WorldController extends InputAdapter
 		timeLeftGameOverDelay = 0;
 		initLevel();
 	}
-	
+
 	public Level level;
 	public int lives;
 	public int score;
-	
+
 	private void initLevel () 
 	{
 		score = 0;
@@ -257,7 +296,7 @@ public class WorldController extends InputAdapter
 		cameraHelper.update(deltaTime);
 		if (!isGameOver() && isPlayerInWater()) 
 		{
-		    AudioManager.instance.play(Assets.instance.sounds.liveLost);
+			AudioManager.instance.play(Assets.instance.sounds.liveLost);
 			lives--;
 			if (isGameOver())
 				timeLeftGameOverDelay = Constants.TIME_DELAY_GAME_OVER;
@@ -266,7 +305,7 @@ public class WorldController extends InputAdapter
 		}
 		level.mountains.updateScrollPosition(cameraHelper.getPosition());
 		if (livesVisual > lives)
-		    livesVisual = Math.max(lives, livesVisual - 1 * deltaTime);
+			livesVisual = Math.max(lives, livesVisual - 1 * deltaTime);
 		scoreVisual = Math.min(score, scoreVisual + 250 * deltaTime);
 	}
 	private void handleDebugInput(float deltaTime)
@@ -348,8 +387,8 @@ public class WorldController extends InputAdapter
 			Gdx.app.debug(TAG, "Camera follow enabled: "
 					+ cameraHelper.hasTarget());
 		} else if (keycode == Keys.ESCAPE || keycode == Keys.BACK) {
-		    // Back to the menu
-		    backToMenu();
+			// Back to the menu
+			backToMenu();
 		}
 
 		return false;
