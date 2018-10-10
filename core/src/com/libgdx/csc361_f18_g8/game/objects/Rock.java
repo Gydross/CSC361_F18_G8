@@ -94,6 +94,8 @@ public class Rock extends AbstractGameObject
 	{
 		super.update(deltaTime);
 		floatCycleTimeLeft -= deltaTime;
+		if (floatTargetPosition == null)
+		floatTargetPosition = new Vector2(position);
 		
 		if (floatCycleTimeLeft <= 0) 
 		{
