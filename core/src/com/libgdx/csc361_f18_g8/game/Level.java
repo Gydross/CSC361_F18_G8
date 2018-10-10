@@ -77,6 +77,7 @@ public class Level
 		rocks = new Array<Rock>();
 		goldcoins = new Array<GoldCoin>();
 		feathers = new Array<Feather>();
+		carrots = new Array<Carrot>();
 		
 		// load image file that represents the level data
 		Pixmap pixmap = new Pixmap(Gdx.files.internal(filename));
@@ -209,6 +210,9 @@ public class Level
 		// Draw Feathers
 		for (Feather feather : feathers)
 			feather.render(batch);
+		// Draw Carrots
+		for (Carrot carrot : carrots)
+		    carrot.render(batch);
 		// Draw Player Character
 		bunnyHead.render(batch);
 		// Draw Water Overlay
