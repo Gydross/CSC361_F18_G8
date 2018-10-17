@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.libgdx.csc361_f18_g8.util.GamePreferences;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+
 
 /**
  * WorldRenderer Renders the game world. Also initializes the camera position
@@ -24,6 +26,9 @@ public class WorldRenderer implements Disposable
 	private OrthographicCamera cameraGUI;       // The GUI's camera
 	private SpriteBatch        batch;           // Draws sprites passed into it
 	private WorldController    worldController; // The WorldController
+	// ch11
+	private static final boolean DEBUG_DRAW_BOX2D_WORLD = false;
+	private Box2DDebugRenderer b2debugRenderer;
 
 	/**
 	 * WorldRenderer - Creation method
@@ -51,6 +56,7 @@ public class WorldRenderer implements Disposable
 		cameraGUI.position.set(0,0,0);
 		cameraGUI.setToOrtho(true);  // Flip y-axis
 		cameraGUI.update();
+		b2debugRenderer = new Box2DDebugRenderer();
 	}
 
 	/**
@@ -75,6 +81,11 @@ public class WorldRenderer implements Disposable
 		batch.begin();
 		worldController.level.render(batch);
 		batch.end();
+		if (DEBUG_DRAW_BOX2D_WORLD)
+		{
+			b2debugRenderer.render(worldController.b2world,
+					camera.combined);
+		}
 	}
 
 	/**
@@ -112,18 +123,18 @@ public class WorldRenderer implements Disposable
 		float offsetX = 50;
 		float offsetY = 50;
 		if (worldController.scoreVisual<worldController.score) {
-		long shakeAlpha = System.currentTimeMillis() % 360;
-		float shakeDist = 1.5f;
-		offsetX += MathUtils.sinDeg(shakeAlpha * 2.2f) * shakeDist;
-		offsetY += MathUtils.sinDeg(shakeAlpha * 2.9f) * shakeDist;
+			long shakeAlpha = System.currentTimeMillis() % 360;
+			float shakeDist = 1.5f;
+			offsetX += MathUtils.sinDeg(shakeAlpha * 2.2f) * shakeDist;
+			offsetY += MathUtils.sinDeg(shakeAlpha * 2.9f) * shakeDist;
 		}
 		batch.draw(Assets.instance.goldCoin.goldCoin, x, y, offsetX,
-		offsetY, 100, 100, 0.35f, -0.35f, 0);
+				offsetY, 100, 100, 0.35f, -0.35f, 0);
 		Assets.instance.fonts.defaultBig.draw(batch,
-		"" + (int)worldController.scoreVisual,
-		x + 75, y + 37);
-//		batch.draw(Assets.instance.goldCoin.goldCoin, x, y, 50, 50, 100, 100, 0.35f, -0.35f, 0);
-//		Assets.instance.fonts.defaultBig.draw(batch, "" + worldController.score, x+17, y+37);
+				"" + (int)worldController.scoreVisual,
+				x + 75, y + 37);
+		//		batch.draw(Assets.instance.goldCoin.goldCoin, x, y, 50, 50, 100, 100, 0.35f, -0.35f, 0);
+		//		Assets.instance.fonts.defaultBig.draw(batch, "" + worldController.score, x+17, y+37);
 	}
 
 	/**
