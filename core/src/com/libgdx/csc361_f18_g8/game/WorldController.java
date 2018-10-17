@@ -65,6 +65,7 @@ public class WorldController extends InputAdapter implements Disposable
 	{
 		if (b2world != null) b2world.dispose();
 	}
+	
 	private void initPhysics () {
 		if (b2world != null) b2world.dispose();
 		b2world = new World(new Vector2(0, -9.81f), true);
@@ -366,31 +367,45 @@ public class WorldController extends InputAdapter implements Disposable
 		handleDebugInput(deltaTime);
 		if (isGameOver() || goalReached) 
 		{
-			timeLeftGameOverDelay -= deltaTime;
-			if (timeLeftGameOverDelay < 0) backToMenu();
-		} 
-		else 
-		{
+		    if (timeLeftGameOverDelay >= 0)
+		    {
+		        Gdx.input.setInputProcessor(null);
+		        level.update(deltaTime);
+		        b2world.step(deltaTime, 8, 3);
+		        timeLeftGameOverDelay -= deltaTime;
+		        cameraHelper.update(deltaTime);
+		        if (timeLeftGameOverDelay < 0)
+		        {
+		            backToMenu();
+		            return;
+		        }
+		    }
+		} else {
 			handleInputGame(deltaTime);
+
+			level.update(deltaTime);
+			testCollisions();
+			b2world.step(deltaTime, 8, 3);
+			cameraHelper.update(deltaTime);
+			
+			if (!isGameOver() && isPlayerInWater()) 
+			{
+			    AudioManager.instance.play(Assets.instance.sounds.liveLost);
+			    lives--;
+			    if (isGameOver())
+			        timeLeftGameOverDelay = Constants.TIME_DELAY_GAME_OVER;
+			    else
+			        initLevel();
+			}
+			
+			level.mountains.updateScrollPosition(cameraHelper.getPosition());
+			if (livesVisual > lives)
+			    livesVisual = Math.max(lives, livesVisual - 1 * deltaTime);
+			
+			scoreVisual = Math.min(score, scoreVisual + 250 * deltaTime);
 		}
-		level.update(deltaTime);
-		testCollisions();
-		b2world.step(deltaTime, 8, 3);
-		cameraHelper.update(deltaTime);
-		if (!isGameOver() && isPlayerInWater()) 
-		{
-			AudioManager.instance.play(Assets.instance.sounds.liveLost);
-			lives--;
-			if (isGameOver())
-				timeLeftGameOverDelay = Constants.TIME_DELAY_GAME_OVER;
-			else
-				initLevel();
-		}
-		level.mountains.updateScrollPosition(cameraHelper.getPosition());
-		if (livesVisual > lives)
-			livesVisual = Math.max(lives, livesVisual - 1 * deltaTime);
-		scoreVisual = Math.min(score, scoreVisual + 250 * deltaTime);
 	}
+	
 	private void handleDebugInput(float deltaTime)
 	{
 		if (Gdx.app.getType() != ApplicationType.Desktop) return;

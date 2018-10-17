@@ -369,6 +369,7 @@ public class MenuScreen extends AbstractGameScreen
 		
 		// + Coins
 		imgCoins = new Image(skinCanyonBunny, "coins");
+		layer.addActor(imgCoins);
 		imgCoins.setOrigin(imgCoins.getWidth() / 2, imgCoins.getHeight() / 2);
 		imgCoins.addAction(sequence(moveTo(135, -20), scaleTo(0, 0), fadeOut(0),
 		        delay(2.5f), parallel(moveBy(0, 100, 0.5f, Interpolation.swingOut),
@@ -417,6 +418,7 @@ public class MenuScreen extends AbstractGameScreen
 		// Add play button
 		btnMenuPlay = new Button(skinCanyonBunny, "play");
 		layer.add(btnMenuPlay);
+		
 		btnMenuPlay.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) 
@@ -429,6 +431,7 @@ public class MenuScreen extends AbstractGameScreen
 		// Add options button
 		btnMenuOptions = new Button(skinCanyonBunny, "options");
 		layer.add(btnMenuOptions);
+		
 		btnMenuOptions.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor)
@@ -436,7 +439,9 @@ public class MenuScreen extends AbstractGameScreen
 				onOptionsClicked();
 			}
 		});
-		if (debugEnabled) layer.debug();
+		
+		if (debugEnabled)
+		    layer.debug();
 		
 		return layer;
 	}
