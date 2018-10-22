@@ -291,7 +291,7 @@ public class BunnyHead extends AbstractGameObject
 			batch.setColor(1.0f, 0.8f, 0.0f, 1.0f);
 
 		// Draw image
-		reg = animation.getKeyFrame(stateTime, true);
+		reg = (TextureRegion) animation.getKeyFrame(stateTime, true);
 		batch.draw(reg.getTexture(), position.x, position.y, origin.x, origin.y, dimension.x + dimCorrectionX, dimension.y + dimCorrectionY, scale.x, scale.y, 
 				rotation, reg.getRegionX(), reg.getRegionY(), reg.getRegionWidth(), reg.getRegionHeight(), viewDirection == VIEW_DIRECTION.LEFT, false);
 
