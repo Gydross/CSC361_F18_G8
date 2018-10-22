@@ -9,7 +9,7 @@ import com.libgdx.csc361_f18_g8.CanyonBunnyMain;
 
 public class DesktopLauncher
 {
-	private static boolean rebuildAtlas = true;
+	private static boolean rebuildAtlas = false;
 	private static boolean drawDebugOutline = false;
 	
 	public static void main(String[] arg)
