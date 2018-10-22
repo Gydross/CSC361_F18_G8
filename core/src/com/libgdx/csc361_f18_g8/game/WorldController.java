@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.libgdx.csc361_f18_g8.util.CameraHelper;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.math.Rectangle;
 import com.libgdx.csc361_f18_g8.game.objects.Rock;
 import com.libgdx.csc361_f18_g8.util.Constants;
@@ -22,6 +23,15 @@ import com.libgdx.csc361_f18_g8.game.objects.BunnyHead.JUMP_STATE;
 import com.libgdx.csc361_f18_g8.game.objects.Feather;
 import com.libgdx.csc361_f18_g8.game.objects.GoldCoin;
 import com.libgdx.csc361_f18_g8.util.AudioManager;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
+import com.libgdx.csc361_f18_g8.game.objects.Carrot;
+
 
 /**
  * WorldController
@@ -29,7 +39,7 @@ import com.libgdx.csc361_f18_g8.util.AudioManager;
  *   and establishes player controls.
  * @author Connor Orischak
  */
-public class WorldController extends InputAdapter
+public class WorldController extends InputAdapter implements Disposable 
 {
 	private static final String TAG = 
 			WorldController.class.getName();
@@ -38,16 +48,117 @@ public class WorldController extends InputAdapter
 	private float timeLeftGameOverDelay;
 
 	private Game game;
-	
+
 	public float livesVisual;
 	public float scoreVisual;
-	
-	private void backToMenu()
+	private boolean goalReached;
+	public World b2world;
+
+
+	/**
+	 * Chapter 11 code
+	 * initPhysics creates a world with gravity
+	 * pulling things down at 9.81 meters per second
+	 */
+	@Override
+	public void dispose()
 	{
-	    // Switch to the menu screen
-	    game.setScreen(new MenuScreen(game));
+		if (b2world != null) b2world.dispose();
 	}
 	
+	private void initPhysics () {
+		if (b2world != null) b2world.dispose();
+		b2world = new World(new Vector2(0, -9.81f), true);
+		// Rocks
+		Vector2 origin = new Vector2();
+		for (Rock rock : level.rocks) {
+			BodyDef bodyDef = new BodyDef();
+			bodyDef.type = BodyType.KinematicBody;
+			bodyDef.position.set(rock.position);
+			Body body = b2world.createBody(bodyDef);
+			rock.body = body;
+			PolygonShape polygonShape = new PolygonShape();
+			origin.x = rock.bounds.width / 2.0f;
+			origin.y = rock.bounds.height / 2.0f;
+			polygonShape.setAsBox(rock.bounds.width / 2.0f,
+					rock.bounds.height / 2.0f, origin, 0);
+			FixtureDef fixtureDef = new FixtureDef();
+			fixtureDef.shape = polygonShape;
+			body.createFixture(fixtureDef);
+			polygonShape.dispose();
+		}
+	}
+
+	/**
+	 * Spawns carrots in the world at a specific
+	 * location
+	 * @param pos
+	 * @param numCarrots
+	 * @param radius
+	 */
+	private void spawnCarrots (Vector2 pos, int numCarrots,	float radius) 
+	{
+		float carrotShapeScale = 0.5f;
+		// create carrots with box2d body and fixture
+		for (int i = 0; i<numCarrots; i++)
+		{
+			Carrot carrot = new Carrot();
+			// calculate random spawn position, rotation, and scale
+			float x = MathUtils.random(-radius, radius);
+			float y = MathUtils.random(5.0f, 15.0f);
+			float rotation = MathUtils.random(0.0f, 360.0f)
+					* MathUtils.degreesToRadians;
+			float carrotScale = MathUtils.random(0.5f, 1.5f);
+			carrot.scale.set(carrotScale, carrotScale);
+			// create box2d body for carrot with start position
+			// and angle of rotation
+			BodyDef bodyDef = new BodyDef();
+			bodyDef.position.set(pos);
+			bodyDef.position.add(x, y);
+			bodyDef.angle = rotation;
+			Body body = b2world.createBody(bodyDef);
+			body.setType(BodyType.DynamicBody);
+			carrot.body = body;
+			// create rectangular shape for carrot to allow
+			// interactions (collisions) with other objects
+			PolygonShape polygonShape = new PolygonShape();
+			float halfWidth = carrot.bounds.width / 2.0f * carrotScale;
+			float halfHeight = carrot.bounds.height /2.0f * carrotScale;
+			polygonShape.setAsBox(halfWidth * carrotShapeScale,
+					halfHeight * carrotShapeScale);
+			// set physics attributes
+			FixtureDef fixtureDef = new FixtureDef();
+			fixtureDef.shape = polygonShape;
+			fixtureDef.density = 50;
+			fixtureDef.restitution = 0.5f;
+			fixtureDef.friction = 0.5f;
+			body.createFixture(fixtureDef);
+			polygonShape.dispose();
+			// finally, add new carrot to list for updating/rendering
+			level.carrots.add(carrot);
+		}
+	}
+
+	/**
+	 * checks bunny's collision with the goal
+	 */
+	private void onCollisionBunnyWithGoal () {
+		goalReached = true;
+		timeLeftGameOverDelay = Constants.TIME_DELAY_GAME_FINISHED;
+		Vector2 centerPosBunnyHead =
+				new Vector2(level.bunnyHead.position);
+		centerPosBunnyHead.x += level.bunnyHead.bounds.width;
+		spawnCarrots(centerPosBunnyHead, Constants.CARROTS_SPAWN_MAX,
+				Constants.CARROTS_SPAWN_RADIUS);
+	}
+
+
+	private void backToMenu()
+	{
+		// Switch to the menu screen
+		game.setScreen(new MenuScreen(game));
+	}
+
 	/**
 	 * Chapter 6 updates
 	 */
@@ -153,14 +264,22 @@ public class WorldController extends InputAdapter
 			onCollisionBunnyWithFeather(feather);
 			break;
 		}
+		// Test collision: Bunny Head <-> Goal
+		if (!goalReached)
+		{
+			r2.set(level.goal.bounds);
+			r2.x += level.goal.position.x;
+			r2.y += level.goal.position.y;
+			if (r1.overlaps(r2)) onCollisionBunnyWithGoal();
+		}
 	}
 
 	public WorldController(Game game) 
 	{
-	    this.game = game;
+		this.game = game;
 		init();
 	}
-	
+
 	private void init() 
 	{
 		Gdx.input.setInputProcessor(this);
@@ -170,16 +289,19 @@ public class WorldController extends InputAdapter
 		timeLeftGameOverDelay = 0;
 		initLevel();
 	}
-	
+
 	public Level level;
 	public int lives;
 	public int score;
-	
+
 	private void initLevel () 
 	{
 		score = 0;
+		scoreVisual = score;
+		goalReached = false;
 		level = new Level(Constants.LEVEL_01);
 		cameraHelper.setTarget(level.bunnyHead);
+		initPhysics();
 	}
 	/**
 	 * Update Chapter 5:
@@ -243,32 +365,47 @@ public class WorldController extends InputAdapter
 	public void update(float deltaTime) 
 	{
 		handleDebugInput(deltaTime);
-		if (isGameOver()) 
+		if (isGameOver() || goalReached) 
 		{
-			timeLeftGameOverDelay -= deltaTime;
-			if (timeLeftGameOverDelay < 0) backToMenu();
-		} 
-		else 
-		{
+		    if (timeLeftGameOverDelay >= 0)
+		    {
+		        Gdx.input.setInputProcessor(null);
+		        level.update(deltaTime);
+		        b2world.step(deltaTime, 8, 3);
+		        timeLeftGameOverDelay -= deltaTime;
+		        cameraHelper.update(deltaTime);
+		        if (timeLeftGameOverDelay < 0)
+		        {
+		            backToMenu();
+		            return;
+		        }
+		    }
+		} else {
 			handleInputGame(deltaTime);
+
+			level.update(deltaTime);
+			testCollisions();
+			b2world.step(deltaTime, 8, 3);
+			cameraHelper.update(deltaTime);
+			
+			if (!isGameOver() && isPlayerInWater()) 
+			{
+			    AudioManager.instance.play(Assets.instance.sounds.liveLost);
+			    lives--;
+			    if (isGameOver())
+			        timeLeftGameOverDelay = Constants.TIME_DELAY_GAME_OVER;
+			    else
+			        initLevel();
+			}
+			
+			level.mountains.updateScrollPosition(cameraHelper.getPosition());
+			if (livesVisual > lives)
+			    livesVisual = Math.max(lives, livesVisual - 1 * deltaTime);
+			
+			scoreVisual = Math.min(score, scoreVisual + 250 * deltaTime);
 		}
-		level.update(deltaTime);
-		testCollisions();
-		cameraHelper.update(deltaTime);
-		if (!isGameOver() && isPlayerInWater()) 
-		{
-		    AudioManager.instance.play(Assets.instance.sounds.liveLost);
-			lives--;
-			if (isGameOver())
-				timeLeftGameOverDelay = Constants.TIME_DELAY_GAME_OVER;
-			else
-				initLevel();
-		}
-		level.mountains.updateScrollPosition(cameraHelper.getPosition());
-		if (livesVisual > lives)
-		    livesVisual = Math.max(lives, livesVisual - 1 * deltaTime);
-		scoreVisual = Math.min(score, scoreVisual + 250 * deltaTime);
 	}
+	
 	private void handleDebugInput(float deltaTime)
 	{
 		if (Gdx.app.getType() != ApplicationType.Desktop) return;
@@ -348,8 +485,8 @@ public class WorldController extends InputAdapter
 			Gdx.app.debug(TAG, "Camera follow enabled: "
 					+ cameraHelper.hasTarget());
 		} else if (keycode == Keys.ESCAPE || keycode == Keys.BACK) {
-		    // Back to the menu
-		    backToMenu();
+			// Back to the menu
+			backToMenu();
 		}
 
 		return false;
